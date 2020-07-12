@@ -1,20 +1,18 @@
-const path = require('path');
-const CFB = require('cfb');
-const {JSDOM} = require('jsdom');
+import { CFB$Container, find } from "cfb";
+import { JSDOM } from "jsdom";
 
 /**
  * Grabs the text content of an odt file
- * 
+ *
  * @param {string} file path to .odt file
  * @return {string} text content of file
  */
-function odtToText(file) {
+export function parse_cfb(file: CFB$Container): string {
   // Read the content.xml of the file
-  const cfb = CFB.read(path.join(__dirname, file), {type: 'file'});
-  const buf = CFB.find(cfb, 'content.xml').content;
+  const buf = find(file, 'content.xml').content;
 
   // Parse with JSDOM
-  const dom = new JSDOM(buf);
+  const dom = new JSDOM((buf as Buffer).toString());
   let result = "";
 
   // Use querySelector to grab elements from content.xml
@@ -27,5 +25,3 @@ function odtToText(file) {
 
   return result;
 }
-
-module.exports = odtToText;
